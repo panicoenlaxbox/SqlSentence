@@ -167,7 +167,7 @@ namespace SqlSentence
             }
             content.Remove(content.Length - 1, 1);
             const RegexOptions options = RegexOptions.IgnoreCase | RegexOptions.Multiline | RegexOptions.ExplicitCapture;
-            var regEx = new Regex(@"AS\s+\[[^\]]+\]", options); // http://www.regexr.com/ http://www.regexper.com/
+            var regEx = new Regex(@"AS\s+\[[^\]]+\]", options);
             var matches = regEx.Matches(content.ToString());
             var regEx2 = new Regex(@"\[.+\]", options);
             var value = new StringBuilder();
@@ -196,7 +196,6 @@ namespace SqlSentence
                 Where.Remove(sqlWherePart);
             }
         }
-
 
         public override string ToString()
         {
