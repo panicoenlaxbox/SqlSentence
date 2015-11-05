@@ -158,7 +158,7 @@ namespace SqlSentence
             return part;
         }
 
-        public string ExtractFieldNamesFromSelect()
+        private string ExtractFieldNamesFromSelect()
         {
             var content = new StringBuilder();
             foreach (var part in Select)
