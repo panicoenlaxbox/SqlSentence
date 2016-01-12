@@ -21,6 +21,8 @@ namespace SqlSentence
 
         public bool Distinct { get; set; }
 
+        public bool Formatted { get; set; }
+
         public List<SqlFromPart> From { get; set; }
 
         public List<SqlPart> GroupBy { get; set; }
@@ -48,171 +50,117 @@ namespace SqlSentence
             };
             foreach (var part in Select)
             {
-                o.Select.Add((SqlPart) part.Clone());
+                o.Select.Add((SqlPart)part.Clone());
             }
             foreach (var part in From)
             {
-                o.From.Add((SqlFromPart) part.Clone());
+                o.From.Add((SqlFromPart)part.Clone());
             }
             foreach (var part in Where)
             {
-                o.Where.Add((SqlWherePart) part.Clone());
+                o.Where.Add((SqlWherePart)part.Clone());
             }
             foreach (var part in GroupBy)
             {
-                o.GroupBy.Add((SqlPart) part.Clone());
+                o.GroupBy.Add((SqlPart)part.Clone());
             }
             foreach (var part in Having)
             {
-                o.Having.Add((SqlPart) part.Clone());
+                o.Having.Add((SqlPart)part.Clone());
             }
-            o.Paging = (SqlPaging) Paging.Clone();
+            o.Paging = (SqlPaging)Paging.Clone();
             o.Distinct = Distinct;
             return o;
         }
 
-        public SqlFromPart AddFrom(string text)
+        public SqlFromPart AddFrom(string value)
         {
-            return AddFrom(SqlFromPartOperator.None, text);
+            return AddFrom(SqlFromPartOperator.None, value);
         }
 
-        public SqlFromPart AddFrom(SqlFromPartOperator @operator, string text)
+        public SqlFromPart AddFrom(SqlFromPartOperator @operator, string value)
         {
-            return AddFrom(@operator, text, string.Empty);
+            return AddFrom(@operator, value, null);
         }
 
-        public SqlFromPart AddFrom(SqlFromPartOperator @operator, string text, string name)
+        public SqlFromPart AddFrom(SqlFromPartOperator @operator, string value, string name)
         {
-            var part = new SqlFromPart(@operator, text, name);
+            var part = new SqlFromPart(@operator, value, name);
             From.Add(part);
             return part;
         }
 
-        public SqlPart AddGroupBy(string text)
+        public SqlPart AddGroupBy(string value)
         {
-            return AddGroupBy(text, string.Empty);
+            return AddGroupBy(value, null);
         }
 
-        public SqlPart AddGroupBy(string text, string name)
+        public SqlPart AddGroupBy(string value, string name)
         {
-            var part = new SqlPart(text, name);
+            var part = new SqlPart(value, name);
             GroupBy.Add(part);
             return part;
         }
 
-        public SqlPart AddHaving(string text)
+        public SqlPart AddHaving(string value)
         {
-            return AddHaving(text, string.Empty);
+            return AddHaving(value, null);
         }
 
-        public SqlPart AddHaving(string text, string name)
+        public SqlPart AddHaving(string value, string name)
         {
-            var part = new SqlPart(text, name);
+            var part = new SqlPart(value, name);
             Having.Add(part);
             return part;
         }
 
-        public SqlPart AddOrderBy(string text)
+        public SqlPart AddOrderBy(string value)
         {
-            return AddOrderBy(text, string.Empty);
+            return AddOrderBy(value, null);
         }
 
-        public SqlPart AddOrderBy(string text, string name)
+        public SqlPart AddOrderBy(string value, string name)
         {
-            var part = new SqlPart(text, name);
+            var part = new SqlPart(value, name);
             OrderBy.Add(part);
             return part;
         }
 
-        public SqlPart AddSelect(string text)
+        public SqlPart AddSelect(string value)
         {
-            return AddSelect(text, string.Empty);
+            return AddSelect(value, null);
         }
 
-        public SqlPart AddSelect(string text, string name)
+        public SqlPart AddSelect(string value, string name)
         {
-            var part = new SqlPart(text, name);
+            var part = new SqlPart(value, name);
             Select.Add(part);
             return part;
         }
 
-        public SqlWherePart AddWhere(string text)
+        public SqlWherePart AddWhere(string value)
         {
-            return AddWhere(SqlWherePartOperator.And, text);
+            return AddWhere(SqlWherePartOperator.And, value);
         }
 
-        public SqlWherePart AddWhere(SqlWherePartOperator @operator, string text)
+        public SqlWherePart AddWhere(SqlWherePartOperator @operator, string value)
         {
-            return AddWhere(@operator, text, string.Empty);
+            return AddWhere(@operator, value, null);
         }
 
-        public SqlWherePart AddWhere(string text, string name)
+        public SqlWherePart AddWhere(string value, string name)
         {
-            return AddWhere(SqlWherePartOperator.And, text, name);
+            return AddWhere(SqlWherePartOperator.And, value, name);
         }
 
-        public SqlWherePart AddWhere(SqlWherePartOperator @operator, string text, string name)
+        public SqlWherePart AddWhere(SqlWherePartOperator @operator, string value, string name)
         {
-            var part = new SqlWherePart(@operator, text, name);
+            var part = new SqlWherePart(@operator, value, name);
             Where.Add(part);
             return part;
         }
 
-        private string ExtractFieldNamesFromSelect()
-        {
-            var content = new StringBuilder();
-            foreach (var part in Select)
-            {
-                content.Append(string.Format(" {0},", part.Text));
-            }
-            content.Remove(content.Length - 1, 1);
-            const RegexOptions options = RegexOptions.IgnoreCase | RegexOptions.Multiline | RegexOptions.ExplicitCapture;
-            var regEx = new Regex(@"AS\s+\[[^\]]+\]", options);
-            var matches = regEx.Matches(content.ToString());
-            var regEx2 = new Regex(@"\[.+\]", options);
-            var value = new StringBuilder();
-            foreach (Match match in matches)
-            {
-                value.Append(regEx2.Match(match.Value).Value);
-                value.Append(",");
-            }
-            value.Remove(value.Length - 1, 1);
-            return value.ToString();
-        }
-
-        public void RemoveWhere(IEnumerable<string> names)
-        {
-            foreach (var name in names)
-            {
-                RemoveWhere(name);
-            }
-        }
-
-        public void RemoveWhere(string name)
-        {
-            var sqlWherePart = Where.SingleOrDefault(p => p.Name.Trim().ToLower() == name.Trim().ToLower());
-            if (sqlWherePart != null)
-            {
-                Where.Remove(sqlWherePart);
-            }
-        }
-
-        public override string ToString()
-        {
-            return ToString(false);
-        }
-
-        public string ToString(bool count)
-        {
-            return CreateSql(count, "*");
-        }
-
-        public string ToString(bool count, string countClause)
-        {
-            return CreateSql(count, countClause);
-        }
-
-        private static string Adjust(string sql)
+        private static string Prettify(string sql)
         {
             const RegexOptions options = RegexOptions.IgnoreCase | RegexOptions.Multiline | RegexOptions.ExplicitCapture;
             var regEx = new Regex("\\s{2,}", options);
@@ -223,30 +171,53 @@ namespace SqlSentence
             return sql;
         }
 
-        private string CreateSql(bool count, string countClause)
+        public string Create()
         {
-            var content = new StringBuilder();
-            content.Append("SELECT");
+            var sql = new StringBuilder();
+
+            AppendSelect(sql);
+
+            AppendFrom(sql);
+
+            AppendWhere(sql);
+
+            AppendGroupBy(sql);
+
+            AppendHaving(sql);
+
+            AppendOrderBy(sql);
+
+            AppendPagination(sql);
+
+            sql.Append(";");
+
+            return Prettify(sql.ToString());
+        }
+
+        private void AppendSelect(StringBuilder sql)
+        {
+            sql.Append("SELECT");
             if (Distinct)
             {
-                content.Append(" DISTINCT ");
+                sql.Append(" DISTINCT ");
             }
-            if (!count)
+            foreach (var part in Select)
             {
-                foreach (var part in Select)
-                {
-                    content.Append(string.Format(" {0},", part.Text));
-                }
-                content.Remove(content.Length - 1, 1);
+                sql.Append(string.Format(" {0},", part.Text));
             }
-            else
+            sql.Remove(sql.Length - 1, 1);
+            if (Formatted)
             {
-                content.Append(string.Format(" COUNT({0})", countClause));
+                sql.Append(Environment.NewLine);
             }
-            content.Append(" FROM");
+        }
+
+        private void AppendFrom(StringBuilder sql)
+        {
+            sql.Append(" FROM");
             foreach (var part in From)
             {
-                var @operator = string.Empty;
+                string @operator = null;
                 switch (part.Operator)
                 {
                     case SqlFromPartOperator.InnerJoin:
@@ -259,19 +230,84 @@ namespace SqlSentence
                         @operator = "RIGHT JOIN";
                         break;
                 }
-                content.Append(string.Format(" {0} {1}", @operator, part.Text));
+                sql.Append(string.Format(" {0} {1}", @operator, part.Text));
                 if (part.NoLock)
                 {
-                    content.Append(" WITH (NOLOCK)");
+                    sql.Append(" WITH (NOLOCK)");
                 }
             }
+
+            if (Formatted)
+            {
+                sql.Append(Environment.NewLine);
+            }
+        }
+
+        private void AppendPagination(StringBuilder sql)
+        {
+            if (Paging.Enabled)
+            {
+                sql.Append(string.Format(" OFFSET {0} ROWS FETCH NEXT {1} ROWS ONLY", Paging.Offset, Paging.PageSize));
+            }
+        }
+
+        private void AppendOrderBy(StringBuilder sql)
+        {
+            if (OrderBy.Any())
+            {
+                sql.Append(" ORDER BY");
+                foreach (var part in OrderBy)
+                {
+                    sql.Append(string.Format(" {0}", part.Text));
+                }
+                if (Formatted)
+                {
+                    sql.Append(Environment.NewLine);
+                }
+            }
+        }
+
+        private void AppendHaving(StringBuilder sql)
+        {
+            if (Having.Any())
+            {
+                sql.Append(" HAVING");
+                foreach (var part in Having)
+                {
+                    sql.Append(string.Format(" {0}", part.Text));
+                }
+                if (Formatted)
+                {
+                    sql.Append(Environment.NewLine);
+                }
+            }
+        }
+
+        private void AppendGroupBy(StringBuilder sql)
+        {
+            if (GroupBy.Any())
+            {
+                sql.Append(" GROUP BY");
+                foreach (var part in GroupBy)
+                {
+                    sql.Append(string.Format(" {0}", part.Text));
+                }
+                if (Formatted)
+                {
+                    sql.Append(Environment.NewLine);
+                }
+            }
+        }
+
+        private void AppendWhere(StringBuilder sql)
+        {
             if (Where.Any())
             {
-                content.Append(" WHERE");
+                sql.Append(" WHERE");
                 var first = true;
                 foreach (var part in Where)
                 {
-                    var @operator = string.Empty;
+                    string @operator = null;
                     switch (part.Operator)
                     {
                         case SqlWherePartOperator.And:
@@ -287,68 +323,14 @@ namespace SqlSentence
                             @operator = "OR NOT";
                             break;
                     }
-                    content.Append(string.Format(" {0} ({1})", first ? string.Empty : @operator, part.Text));
+                    sql.Append(string.Format(" {0} ({1})", first ? null : @operator, part.Text));
                     first = false;
                 }
-            }
-            if (GroupBy.Any())
-            {
-                content.Append(" GROUP BY");
-                foreach (var part in GroupBy)
+                if (Formatted)
                 {
-                    content.Append(string.Format(" {0}", part.Text));
+                    sql.Append(Environment.NewLine);
                 }
             }
-            if (Having.Any())
-            {
-                content.Append(" HAVING");
-                foreach (var part in Having)
-                {
-                    content.Append(string.Format(" {0}", part.Text));
-                }
-            }
-            var orderBy = string.Empty;
-            if (OrderBy.Any() && !count)
-            {
-                foreach (var part in OrderBy)
-                {
-                    orderBy += string.Format(" {0}", part.Text);
-                }
-                if (!Paging.Enabled)
-                {
-                    content.Append(string.Format(" ORDER BY {0}", orderBy));
-                }
-            }
-            var sql = content.ToString();
-
-            if (Paging.Enabled && !count)
-            {
-                const string format = @"
-                    SELECT 
-                        {0}
-                    FROM 
-                        (SELECT ROW_NUMBER() OVER(ORDER BY {1}) AS RowNumber, {2}) AS Paging
-                    WHERE 
-                        RowNumber BETWEEN {3} AND {4}";
-                var select = Paging.Select;
-                if (string.IsNullOrWhiteSpace(select))
-                {
-                    select = ExtractFieldNamesFromSelect();
-                }
-                var from = Paging.PageIndex <= 1 ? 1 : ((Paging.PageIndex - 1)*Paging.PageSize) + 1;
-                var to = from + Paging.PageSize - 1;
-                sql = string.Format(
-                    format,
-                    select,
-                    orderBy,
-                    sql.Substring("SELECT ".Length),
-                    from,
-                    to);
-            }
-
-            sql = Adjust(sql);
-
-            return sql;
         }
     }
 }

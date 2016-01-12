@@ -7,7 +7,7 @@ namespace SqlSentence
         }
 
         public SqlFromPart(SqlFromPartOperator @operator, string text)
-            : this(@operator, text, string.Empty)
+            : this(@operator, text, null)
         {
         }
 

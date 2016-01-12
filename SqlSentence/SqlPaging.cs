@@ -22,6 +22,18 @@ namespace SqlSentence
 
         public int PageSize { get; set; }
 
+        public int Offset
+        {
+            get
+            {
+                if (PageIndex == 1)
+                {
+                    return 0;
+                }
+                return PageIndex * PageSize;
+            }
+        }
+
         public string Select { get; set; }
 
         public object Clone()

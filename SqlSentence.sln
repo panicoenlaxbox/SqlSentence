@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.23107.0
+VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SqlSentence", "SqlSentence\SqlSentence.csproj", "{F28E7347-394B-4C71-A8D2-6F04F4BC40F9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SqlSentence.Tests", "SqlSentence.Tests\SqlSentence.Tests.csproj", "{EA6A10D1-88F2-4014-85F6-48D5EDF8B920}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{F28E7347-394B-4C71-A8D2-6F04F4BC40F9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F28E7347-394B-4C71-A8D2-6F04F4BC40F9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F28E7347-394B-4C71-A8D2-6F04F4BC40F9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EA6A10D1-88F2-4014-85F6-48D5EDF8B920}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EA6A10D1-88F2-4014-85F6-48D5EDF8B920}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EA6A10D1-88F2-4014-85F6-48D5EDF8B920}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EA6A10D1-88F2-4014-85F6-48D5EDF8B920}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

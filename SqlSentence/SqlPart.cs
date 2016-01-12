@@ -9,7 +9,7 @@ namespace SqlSentence
         }
 
         public SqlPart(string text)
-            : this(text, string.Empty)
+            : this(text, null)
         {
         }
 
