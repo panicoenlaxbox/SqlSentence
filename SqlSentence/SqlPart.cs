@@ -4,28 +4,24 @@ namespace SqlSentence
 {
     public class SqlPart : ICloneable
     {
-        public SqlPart()
+        public SqlPart(string value)
+            : this(value, null)
         {
         }
 
-        public SqlPart(string text)
-            : this(text, null)
+        public SqlPart(string value, string name)
         {
-        }
-
-        public SqlPart(string text, string name)
-        {
-            Text = text;
+            Value = value;
             Name = name;
         }
 
         public string Name { get; set; }
 
-        public string Text { get; set; }
+        public string Value { get; set; }
 
         public virtual object Clone()
         {
-            return new SqlPart(Text, Name);
+            return new SqlPart(Value, Name);
         }
     }
 }

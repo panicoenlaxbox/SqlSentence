@@ -2,17 +2,8 @@ namespace SqlSentence
 {
     public class SqlWherePart : SqlPart
     {
-        public SqlWherePart()
-        {
-        }
-
-        public SqlWherePart(SqlWherePartOperator @operator, string text)
-            : this(@operator, text, null)
-        {
-        }
-
-        public SqlWherePart(SqlWherePartOperator @operator, string text, string name)
-            : base(text, name)
+        public SqlWherePart(string value, string name, SqlWherePartOperator @operator)
+            : base(value, name)
         {
             Operator = @operator;
         }
@@ -21,7 +12,7 @@ namespace SqlSentence
 
         public override object Clone()
         {
-            return new SqlWherePart(Operator, Text, Name);
+            return new SqlWherePart(Value, Name, Operator);
         }
     }
 }

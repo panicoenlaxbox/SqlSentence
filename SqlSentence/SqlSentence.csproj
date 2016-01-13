@@ -45,6 +45,8 @@
     <Compile Include="SqlBuilder.cs" />
     <Compile Include="SqlFromPart.cs" />
     <Compile Include="SqlFromPartOperator.cs" />
+    <Compile Include="SqlOrderByDirection.cs" />
+    <Compile Include="SqlOrderByPart.cs" />
     <Compile Include="SqlPaging.cs" />
     <Compile Include="SqlPart.cs" />
     <Compile Include="SqlWherePart.cs" />

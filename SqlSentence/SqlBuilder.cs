@@ -15,7 +15,7 @@ namespace SqlSentence
             Where = new List<SqlWherePart>();
             GroupBy = new List<SqlPart>();
             Having = new List<SqlPart>();
-            OrderBy = new List<SqlPart>();
+            OrderBy = new List<SqlOrderByPart>();
             Paging = new SqlPaging();
         }
 
@@ -29,7 +29,7 @@ namespace SqlSentence
 
         public List<SqlPart> Having { get; set; }
 
-        public List<SqlPart> OrderBy { get; set; }
+        public List<SqlOrderByPart> OrderBy { get; set; }
 
         public SqlPaging Paging { get; set; }
 
@@ -46,7 +46,7 @@ namespace SqlSentence
                 Where = new List<SqlWherePart>(),
                 GroupBy = new List<SqlPart>(),
                 Having = new List<SqlPart>(),
-                OrderBy = new List<SqlPart>()
+                OrderBy = new List<SqlOrderByPart>()
             };
             foreach (var part in Select)
             {
@@ -68,6 +68,10 @@ namespace SqlSentence
             {
                 o.Having.Add((SqlPart)part.Clone());
             }
+            foreach (var part in OrderBy)
+            {
+                o.OrderBy.Add((SqlOrderByPart)part.Clone());
+            }
             o.Paging = (SqlPaging)Paging.Clone();
             o.Distinct = Distinct;
             return o;
@@ -85,7 +89,7 @@ namespace SqlSentence
 
         public SqlFromPart AddFrom(SqlFromPartOperator @operator, string value, string name)
         {
-            var part = new SqlFromPart(@operator, value, name);
+            var part = new SqlFromPart(value, name, @operator);
             From.Add(part);
             return part;
         }
@@ -114,14 +118,19 @@ namespace SqlSentence
             return part;
         }
 
-        public SqlPart AddOrderBy(string value)
+        public SqlOrderByPart AddOrderBy(string value)
         {
-            return AddOrderBy(value, null);
+            return AddOrderBy(SqlOrderByDirection.Ascending, value);
         }
 
-        public SqlPart AddOrderBy(string value, string name)
+        public SqlOrderByPart AddOrderBy(SqlOrderByDirection direction, string value)
         {
-            var part = new SqlPart(value, name);
+            return AddOrderBy(SqlOrderByDirection.Ascending, value, null);
+        }
+
+        public SqlOrderByPart AddOrderBy(SqlOrderByDirection direction, string value, string name)
+        {
+            var part = new SqlOrderByPart(value, name, direction);
             OrderBy.Add(part);
             return part;
         }
@@ -148,16 +157,18 @@ namespace SqlSentence
             return AddWhere(@operator, value, null);
         }
 
-        public SqlWherePart AddWhere(string value, string name)
-        {
-            return AddWhere(SqlWherePartOperator.And, value, name);
-        }
-
         public SqlWherePart AddWhere(SqlWherePartOperator @operator, string value, string name)
         {
-            var part = new SqlWherePart(@operator, value, name);
+            var part = new SqlWherePart(value, name, @operator);
             Where.Add(part);
             return part;
+        }
+
+        public void EnablePagination(int pageIndex, int pageSize)
+        {
+            Paging.Enabled = true;
+            Paging.PageIndex = pageIndex;
+            Paging.PageSize = pageSize;
         }
 
         private static string Prettify(string sql)
@@ -181,9 +192,9 @@ namespace SqlSentence
 
             AppendWhere(sql);
 
-            AppendGroupBy(sql);
+            AppendSqlPartList(sql, GroupBy, "GROUP BY");
 
-            AppendHaving(sql);
+            AppendSqlPartList(sql, Having, "HAVING");
 
             AppendOrderBy(sql);
 
@@ -203,7 +214,7 @@ namespace SqlSentence
             }
             foreach (var part in Select)
             {
-                sql.Append(string.Format(" {0},", part.Text));
+                sql.Append(string.Format(" {0},", part.Value));
             }
             sql.Remove(sql.Length - 1, 1);
             if (Formatted)
@@ -230,7 +241,7 @@ namespace SqlSentence
                         @operator = "RIGHT JOIN";
                         break;
                 }
-                sql.Append(string.Format(" {0} {1}", @operator, part.Text));
+                sql.Append(string.Format(" {0} {1}", @operator, part.Value));
                 if (part.NoLock)
                 {
                     sql.Append(" WITH (NOLOCK)");
@@ -251,47 +262,16 @@ namespace SqlSentence
             }
         }
 
-        private void AppendOrderBy(StringBuilder sql)
+        private void AppendSqlPartList(StringBuilder sql, IEnumerable<SqlPart> list, string clausule)
         {
-            if (OrderBy.Any())
+            if (list.Any())
             {
-                sql.Append(" ORDER BY");
-                foreach (var part in OrderBy)
+                sql.Append(string.Format(" {0}", clausule));
+                foreach (var part in list)
                 {
-                    sql.Append(string.Format(" {0}", part.Text));
+                    sql.Append(string.Format(" {0},", part.Value));
                 }
-                if (Formatted)
-                {
-                    sql.Append(Environment.NewLine);
-                }
-            }
-        }
-
-        private void AppendHaving(StringBuilder sql)
-        {
-            if (Having.Any())
-            {
-                sql.Append(" HAVING");
-                foreach (var part in Having)
-                {
-                    sql.Append(string.Format(" {0}", part.Text));
-                }
-                if (Formatted)
-                {
-                    sql.Append(Environment.NewLine);
-                }
-            }
-        }
-
-        private void AppendGroupBy(StringBuilder sql)
-        {
-            if (GroupBy.Any())
-            {
-                sql.Append(" GROUP BY");
-                foreach (var part in GroupBy)
-                {
-                    sql.Append(string.Format(" {0}", part.Text));
-                }
+                sql.Remove(sql.Length - 1, 1);
                 if (Formatted)
                 {
                     sql.Append(Environment.NewLine);
@@ -323,9 +303,26 @@ namespace SqlSentence
                             @operator = "OR NOT";
                             break;
                     }
-                    sql.Append(string.Format(" {0} ({1})", first ? null : @operator, part.Text));
+                    sql.Append(string.Format(" {0} ({1})", first ? null : @operator, part.Value));
                     first = false;
                 }
+                if (Formatted)
+                {
+                    sql.Append(Environment.NewLine);
+                }
+            }
+        }
+
+        private void AppendOrderBy(StringBuilder sql)
+        {
+            if (OrderBy.Any())
+            {
+                sql.Append(" ORDER BY");
+                foreach (var part in OrderBy)
+                {
+                    sql.Append(string.Format(" {0} {1},", part.Value, part.Direction == SqlOrderByDirection.Ascending ? "ASC" : "DESC"));
+                }
+                sql.Remove(sql.Length - 1, 1);
                 if (Formatted)
                 {
                     sql.Append(Environment.NewLine);

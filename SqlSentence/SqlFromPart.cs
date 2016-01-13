@@ -2,26 +2,10 @@ namespace SqlSentence
 {
     public class SqlFromPart : SqlPart
     {
-        public SqlFromPart()
-        {
-        }
-
-        public SqlFromPart(SqlFromPartOperator @operator, string text)
-            : this(@operator, text, null)
-        {
-        }
-
-        public SqlFromPart(SqlFromPartOperator @operator, string text, string name)
-            : this(@operator, text, name, false)
+        public SqlFromPart(string value, string name, SqlFromPartOperator @operator)
+            : base(value, name)
         {
             Operator = @operator;
-        }
-
-        public SqlFromPart(SqlFromPartOperator @operator, string text, string name, bool noLock)
-            : base(text, name)
-        {
-            Operator = @operator;
-            NoLock = noLock;
         }
 
         public bool NoLock { get; set; }
@@ -30,7 +14,7 @@ namespace SqlSentence
 
         public override object Clone()
         {
-            return new SqlFromPart(Operator, Text, Name, NoLock);
+            return new SqlFromPart(Value, Name, Operator) { NoLock = NoLock };
         }
     }
 }
