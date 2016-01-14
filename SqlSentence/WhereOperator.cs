@@ -1,6 +1,6 @@
 namespace SqlSentence
 {
-    public enum SqlWherePartOperator
+    public enum WhereOperator
     {
         And,
         Or,

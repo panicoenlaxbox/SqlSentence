@@ -2,18 +2,13 @@ using System;
 
 namespace SqlSentence
 {
-    public class SqlPaging : ICloneable
+    public class Paging : ICloneable
     {
-        public SqlPaging()
-            : this(1, 10, false)
+        public Paging()
         {
-        }
-
-        public SqlPaging(int pageIndex, int pageSize, bool enabled)
-        {
-            PageIndex = pageIndex;
-            PageSize = pageSize;
-            Enabled = enabled;
+            PageIndex = 1;
+            PageSize = 10;
+            CteTotalCountFieldName = "TotalCount";
         }
 
         public bool Enabled { get; set; }
@@ -21,6 +16,10 @@ namespace SqlSentence
         public int PageIndex { get; set; }
 
         public int PageSize { get; set; }
+
+        public bool UseCte { get; set; }
+
+        public string CteTotalCountFieldName { get; set; }
 
         public int Offset
         {
@@ -38,7 +37,7 @@ namespace SqlSentence
 
         public object Clone()
         {
-            return new SqlPaging(PageIndex, PageSize, Enabled);
+            return MemberwiseClone();
         }
     }
 }

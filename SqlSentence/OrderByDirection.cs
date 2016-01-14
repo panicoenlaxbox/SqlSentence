@@ -1,7 +1,8 @@
 namespace SqlSentence
 {
-    public enum SqlOrderByDirection
+    public enum OrderByDirection
     {
+        None,
         Ascending,
         Descending
     }

@@ -2,14 +2,9 @@ using System;
 
 namespace SqlSentence
 {
-    public class SqlPart : ICloneable
+    public class Part : ICloneable
     {
-        public SqlPart(string value)
-            : this(value, null)
-        {
-        }
-
-        public SqlPart(string value, string name)
+        public Part(string value, string name)
         {
             Value = value;
             Name = name;
@@ -21,7 +16,7 @@ namespace SqlSentence
 
         public virtual object Clone()
         {
-            return new SqlPart(Value, Name);
+            return MemberwiseClone();
         }
     }
 }

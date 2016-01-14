@@ -1,6 +1,6 @@
 namespace SqlSentence
 {
-    public enum SqlFromPartOperator
+    public enum FromOperator
     {
         None,
         InnerJoin,

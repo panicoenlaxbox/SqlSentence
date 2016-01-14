@@ -42,18 +42,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SqlBuilder.cs" />
-    <Compile Include="SqlFromPart.cs" />
-    <Compile Include="SqlFromPartOperator.cs" />
-    <Compile Include="SqlOrderByDirection.cs" />
-    <Compile Include="SqlOrderByPart.cs" />
-    <Compile Include="SqlPaging.cs" />
-    <Compile Include="SqlPart.cs" />
-    <Compile Include="SqlWherePart.cs" />
-    <Compile Include="SqlWherePartOperator.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="ClassDiagram1.cd" />
+    <Compile Include="Builder.cs" />
+    <Compile Include="FromPart.cs" />
+    <Compile Include="FromOperator.cs" />
+    <Compile Include="OrderByDirection.cs" />
+    <Compile Include="Paging.cs" />
+    <Compile Include="Part.cs" />
+    <Compile Include="StringBuilderExtensions.cs" />
+    <Compile Include="WherePart.cs" />
+    <Compile Include="WhereOperator.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
