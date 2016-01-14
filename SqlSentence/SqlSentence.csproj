@@ -42,7 +42,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Builder.cs" />
+    <Compile Include="SqlSentenceBuilder.cs" />
     <Compile Include="FromPart.cs" />
     <Compile Include="FromOperator.cs" />
     <Compile Include="OrderByDirection.cs" />

@@ -6,9 +6,9 @@ using System.Text.RegularExpressions;
 
 namespace SqlSentence
 {
-    public class Builder : ICloneable
+    public class SqlSentenceBuilder : ICloneable
     {
-        public Builder()
+        public SqlSentenceBuilder()
         {
             Select = new List<Part>();
             From = new List<FromPart>();
@@ -37,7 +37,7 @@ namespace SqlSentence
 
         public object Clone()
         {
-            var o = new Builder();
+            var o = new SqlSentenceBuilder();
             o.Distinct = Distinct;
             foreach (var part in Select)
             {

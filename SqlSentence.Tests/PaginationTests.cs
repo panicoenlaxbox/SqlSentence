@@ -14,7 +14,7 @@ namespace SqlSentence.Tests
         [Test]
         public void Pagination()
         {
-            var builder = new Builder();
+            var builder = new SqlSentenceBuilder();
             builder.AddSelect(@"Canal
 		,Tipologia
 		,NivelClasificacion1
