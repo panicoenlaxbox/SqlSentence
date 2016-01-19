@@ -37,8 +37,7 @@ namespace SqlSentence
 
         public object Clone()
         {
-            var o = new SqlSentenceBuilder();
-            o.Distinct = Distinct;
+            var o = new SqlSentenceBuilder { Distinct = Distinct };
             foreach (var part in Select)
             {
                 o.Select.Add((Part)part.Clone());
@@ -69,15 +68,15 @@ namespace SqlSentence
 
         public FromPart AddFrom(string value)
         {
-            return AddFrom(FromOperator.None, value);
+            return AddFrom(value, FromOperator.None);
         }
 
-        public FromPart AddFrom(FromOperator @operator, string value)
+        public FromPart AddFrom(string value, FromOperator @operator)
         {
-            return AddFrom(@operator, value, null);
+            return AddFrom(value, null, @operator);
         }
 
-        public FromPart AddFrom(FromOperator @operator, string value, string name)
+        public FromPart AddFrom(string value, string name, FromOperator @operator)
         {
             var part = new FromPart(value, name, @operator);
             From.Add(part);
@@ -134,19 +133,41 @@ namespace SqlSentence
 
         public WherePart AddWhere(string value)
         {
-            return AddWhere(WhereOperator.And, value);
+            return AddWhere(value, WhereOperator.And);
         }
 
-        public WherePart AddWhere(WhereOperator @operator, string value)
+        public WherePart AddWhere(string value, WhereOperator @operator)
         {
-            return AddWhere(@operator, value, null);
+            return AddWhere(value, null, @operator);
         }
 
-        public WherePart AddWhere(WhereOperator @operator, string value, string name)
+        public WherePart AddWhere(string value, string name)
         {
-            var part = new WherePart(value, name, @operator);
+            return AddWhere(value, name, WhereOperator.And);
+        }
+
+        public WherePart AddWhere(string value, string name, WhereOperator @operator)
+        {
+            var part = new WherePart(value, name != null ? name.Trim() : null, @operator);
             Where.Add(part);
             return part;
+        }
+
+        public void RemoveWhere(string name)
+        {
+            var part = Where.SingleOrDefault(p => string.Equals(p.Name, name.Trim(), StringComparison.CurrentCultureIgnoreCase));
+            if (part != null)
+            {
+                Where.Remove(part);
+            }
+        }
+
+        public void RemoveWhere(IEnumerable<string> names)
+        {
+            foreach (var name in names)
+            {
+                RemoveWhere(name);
+            }
         }
 
         public void EnablePagination(int pageIndex, int pageSize)
@@ -178,6 +199,20 @@ namespace SqlSentence
             sql = regex.Replace(sql, " ");
             regex = new Regex(",\\s*,", options);
             sql = regex.Replace(sql, ",");
+            return sql;
+        }
+
+        public string BuildWithCount()
+        {
+            var copy = new List<Part>();
+            foreach (var part in Select)
+            {
+                copy.Add((Part)part.Clone());
+            }
+            Select.Clear();
+            AddSelect("COUNT(*)");
+            var sql = Build();
+            Select = copy;
             return sql;
         }
 

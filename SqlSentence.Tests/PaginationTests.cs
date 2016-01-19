@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Diagnostics;
 using NUnit.Framework;
 
 namespace SqlSentence.Tests
@@ -27,6 +22,7 @@ namespace SqlSentence.Tests
             builder.AddGroupBy("Tipologia");
             builder.AddGroupBy("NivelClasificacion1, NivelClasificacion2");
             builder.EnablePaginationWithCte(1, 10);
+            Debug.Print(builder.BuildWithCount());
             Debug.Print(builder.Build());
         }
     }
