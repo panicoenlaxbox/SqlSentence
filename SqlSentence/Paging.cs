@@ -25,15 +25,9 @@ namespace SqlSentence
         {
             get
             {
-                if (PageIndex == 1)
-                {
-                    return 0;
-                }
-                return PageIndex * PageSize;
+                return (PageIndex - 1) * PageSize;
             }
         }
-
-        public string Select { get; set; }
 
         public object Clone()
         {

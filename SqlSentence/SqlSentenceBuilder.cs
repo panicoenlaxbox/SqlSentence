@@ -342,23 +342,30 @@ namespace SqlSentence
                 var first = true;
                 foreach (var part in Where)
                 {
-                    string @operator = null;
-                    switch (part.Operator)
+                    if (part.Operator != WhereOperator.None)
                     {
-                        case WhereOperator.And:
-                            @operator = "AND";
-                            break;
-                        case WhereOperator.Or:
-                            @operator = "OR";
-                            break;
-                        case WhereOperator.AndNot:
-                            @operator = "AND NOT";
-                            break;
-                        case WhereOperator.OrNot:
-                            @operator = "OR NOT";
-                            break;
+                        string @operator = null;
+                        switch (part.Operator)
+                        {
+                            case WhereOperator.And:
+                                @operator = "AND";
+                                break;
+                            case WhereOperator.Or:
+                                @operator = "OR";
+                                break;
+                            case WhereOperator.AndNot:
+                                @operator = "AND NOT";
+                                break;
+                            case WhereOperator.OrNot:
+                                @operator = "OR NOT";
+                                break;
+                        }
+                        sql.Append(string.Format(" {0} ({1})", first ? null : @operator, part.Value));
                     }
-                    sql.Append(string.Format(" {0} ({1})", first ? null : @operator, part.Value));
+                    else
+                    {
+                        sql.Append(part.Value);
+                    }
                     first = false;
                 }
             }
