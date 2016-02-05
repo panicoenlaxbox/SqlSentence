@@ -202,18 +202,20 @@ namespace SqlSentence
             return sql;
         }
 
-        public string BuildWithCount()
+        public string BuildWithCount(string count = "*")
         {
-            var copy = new List<Part>();
-            foreach (var part in Select)
-            {
-                copy.Add((Part)part.Clone());
-            }
-            Select.Clear();
-            AddSelect("COUNT(*)");
-            var sql = Build();
-            Select = copy;
-            return sql;
+            var newSql = (SqlSentenceBuilder)Clone();
+            newSql.Distinct = false;
+            newSql.Select.Clear();
+            newSql.OrderBy.Clear();
+            newSql.AddSelect($"COUNT({count})");
+            newSql.Paging.Enabled = false;
+            return newSql.Build();
+        }
+
+        public static string ReplaceSimpleQuotes(string value)
+        {
+            return value.Replace("'", "''");
         }
 
         public string Build()
