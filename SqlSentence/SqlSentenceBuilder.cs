@@ -19,6 +19,8 @@ namespace SqlSentence
             Paging = new Paging();
         }
 
+        public bool Separator { get; set; }
+
         public bool Distinct { get; set; }
 
         public IList<FromPart> From { get; set; }
@@ -37,7 +39,11 @@ namespace SqlSentence
 
         public object Clone()
         {
-            var o = new SqlSentenceBuilder { Distinct = Distinct };
+            var o = new SqlSentenceBuilder
+            {
+                Distinct = Distinct,
+                Separator = Separator
+            };
             foreach (var part in Select)
             {
                 o.Select.Add((Part)part.Clone());
@@ -268,9 +274,17 @@ namespace SqlSentence
                 AppendSqlPartList(sql, OrderBy, "ORDER BY");
             }
 
-            sql.Append(";");
+            if (Separator)
+            {
+                sql.Append(";");
+            }
 
             return Prettify(sql.ToString());
+        }
+
+        public override string ToString()
+        {   
+            return Build();
         }
 
         private void AppendSelect(StringBuilder sql)
